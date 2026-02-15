@@ -1,12 +1,12 @@
 import os
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Dispatcher
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # ====== Переменные окружения ======
 TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = int(os.getenv("CHAT_ID", "0"))
-PORT = int(os.environ.get("PORT", 5000))  # BotHost даёт порт через переменную
-URL = os.environ.get("BOT_URL")  # твой публичный URL, например https://имя_сервиса.bothost.ru
+PORT = int(os.environ.get("PORT", 5000))       # BotHost даёт порт через переменную
+URL = os.environ.get("BOT_URL")               # публичный URL проекта на BotHost
 
 if not TOKEN or not CHAT_ID or not URL:
     print("ERROR: Проверь BOT_TOKEN, CHAT_ID и BOT_URL")
@@ -18,15 +18,13 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ====== Запуск приложения с Webhook ======
 if __name__ == "__main__":
-    # Создаём приложение
     app = ApplicationBuilder().token(TOKEN).build()
     app.add_handler(CommandHandler("start", start_command))
 
-    # Запуск Webhook
     print(f"Bot starting with Webhook: {URL}/{TOKEN} on port {PORT}")
     app.run_webhook(
         listen="0.0.0.0",
         port=PORT,
-        url_path=TOKEN,            # путь webhook
+        url_path=TOKEN,
         webhook_url=f"{URL}/{TOKEN}"
     )
