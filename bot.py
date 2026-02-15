@@ -5,20 +5,25 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # ====== Дебаг переменных окружения ======
+print("=== DEBUG: Starting bot ===")
+
 TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID_ENV = os.getenv("CHAT_ID")
 
+print(f"DEBUG: BOT_TOKEN={TOKEN}")
+print(f"DEBUG: CHAT_ID_ENV={CHAT_ID_ENV}")
+
 if not TOKEN or not CHAT_ID_ENV:
-    print("ERROR: BOT_TOKEN or CHAT_ID is missing!")
-    print(f"BOT_TOKEN={TOKEN}")
-    print(f"CHAT_ID={CHAT_ID_ENV}")
+    print("ERROR: BOT_TOKEN или CHAT_ID не задан!")
     sys.exit(1)
 
 try:
     CHAT_ID = int(CHAT_ID_ENV)
 except ValueError:
-    print(f"ERROR: CHAT_ID is not a valid number: {CHAT_ID_ENV}")
+    print(f"ERROR: CHAT_ID не число: {CHAT_ID_ENV}")
     sys.exit(1)
+
+print("=== DEBUG: Environment variables are OK ===")
 
 words_file = "words.txt"      # файл со словами
 periodic_job = None
@@ -131,6 +136,7 @@ if __name__ == "__main__":
         app.add_handler(CommandHandler("list", list_words))
         app.add_handler(CommandHandler("clear", clear_words))
         app.add_handler(CallbackQueryHandler(button_handler))
+        print("=== DEBUG: Starting polling ===")
         app.run_polling()
     except Exception as e:
         print("ERROR during bot startup:", e)
