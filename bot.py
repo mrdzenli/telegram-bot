@@ -5,8 +5,8 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 print("=== DEBUG: Starting bot ===")
 
-TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID_ENV = os.getenv("CHAT_ID")
+TOKEN = os.getenv("8313603481:AAF34DtYN0cDMMcY0vJsQgdNGH7reZdGZgI")
+CHAT_ID_ENV = os.getenv("800678838")
 print(f"DEBUG: BOT_TOKEN={TOKEN}")
 print(f"DEBUG: CHAT_ID={CHAT_ID_ENV}")
 
