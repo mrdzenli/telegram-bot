@@ -6,7 +6,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 TOKEN = "8313603481:AAF34DtYN0cDMMcY0vJsQgdNGH7reZdGZgI"
 CHAT_ID = 800678838
 PORT = int(os.environ.get("PORT", 5000))
-URL = "https://имя_сервиса.bothost.ru"  # поменяй на публичный URL твоего проекта
+URL = "https://имя_сервиса.bothost.ru"  # замените на публичный URL вашего проекта
 
 # ====== Команда /start ======
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
