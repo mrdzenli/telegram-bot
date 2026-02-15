@@ -1,34 +1,32 @@
 import os
-import sys
 from telegram import Update
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes, Dispatcher
 
-print("=== DEBUG: Starting bot ===")
+# ====== Переменные окружения ======
+TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = int(os.getenv("CHAT_ID", "0"))
+PORT = int(os.environ.get("PORT", 5000))  # BotHost даёт порт через переменную
+URL = os.environ.get("BOT_URL")  # твой публичный URL, например https://имя_сервиса.bothost.ru
 
-TOKEN = os.getenv("8313603481:AAF34DtYN0cDMMcY0vJsQgdNGH7reZdGZgI")
-CHAT_ID_ENV = os.getenv("800678838")
-print(f"DEBUG: BOT_TOKEN={TOKEN}")
-print(f"DEBUG: CHAT_ID={CHAT_ID_ENV}")
+if not TOKEN or not CHAT_ID or not URL:
+    print("ERROR: Проверь BOT_TOKEN, CHAT_ID и BOT_URL")
+    exit(1)
 
-if not TOKEN or not CHAT_ID_ENV:
-    print("ERROR: BOT_TOKEN или CHAT_ID не заданы!")
-    sys.exit(1)
-
-try:
-    CHAT_ID = int(CHAT_ID_ENV)
-except ValueError:
-    print(f"ERROR: CHAT_ID не число: {CHAT_ID_ENV}")
-    sys.exit(1)
-
+# ====== Команда /start ======
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("✅ Бот подключен и работает!")
 
+# ====== Запуск приложения с Webhook ======
 if __name__ == "__main__":
-    try:
-        app = ApplicationBuilder().token(TOKEN).build()
-        app.add_handler(CommandHandler("start", start_command))
-        print("=== DEBUG: Running polling ===")
-        app.run_polling()
-    except Exception as e:
-        print("ERROR during bot startup:", e)
-        sys.exit(1)
+    # Создаём приложение
+    app = ApplicationBuilder().token(TOKEN).build()
+    app.add_handler(CommandHandler("start", start_command))
+
+    # Запуск Webhook
+    print(f"Bot starting with Webhook: {URL}/{TOKEN} on port {PORT}")
+    app.run_webhook(
+        listen="0.0.0.0",
+        port=PORT,
+        url_path=TOKEN,            # путь webhook
+        webhook_url=f"{URL}/{TOKEN}"
+    )
