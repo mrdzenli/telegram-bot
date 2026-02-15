@@ -3,8 +3,10 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # ====== Настройки ======
-TOKEN = "8313603481:AAHsGp07xsweC3ZbASQ_IeZ7hAT-Ug-7LzM"  # <- вставь свой токен
-CHAT_ID = 800678838           # <- твой Telegram ID
+import os
+
+TOKEN = os.getenv("BOT_TOKEN")
+CHAT_ID = int(os.getenv("CHAT_ID"))
 words_file = "words.txt"      # файл со словами
 periodic_job = None
 
