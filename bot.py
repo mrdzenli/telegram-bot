@@ -1,12 +1,25 @@
+import os
+import sys
 import random
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import ApplicationBuilder, CommandHandler, CallbackQueryHandler, ContextTypes
 
-# ====== Настройки ======
-import os
-
+# ====== Дебаг переменных окружения ======
 TOKEN = os.getenv("BOT_TOKEN")
-CHAT_ID = int(os.getenv("CHAT_ID"))
+CHAT_ID_ENV = os.getenv("CHAT_ID")
+
+if not TOKEN or not CHAT_ID_ENV:
+    print("ERROR: BOT_TOKEN or CHAT_ID is missing!")
+    print(f"BOT_TOKEN={TOKEN}")
+    print(f"CHAT_ID={CHAT_ID_ENV}")
+    sys.exit(1)
+
+try:
+    CHAT_ID = int(CHAT_ID_ENV)
+except ValueError:
+    print(f"ERROR: CHAT_ID is not a valid number: {CHAT_ID_ENV}")
+    sys.exit(1)
+
 words_file = "words.txt"      # файл со словами
 periodic_job = None
 
@@ -15,6 +28,7 @@ try:
     with open(words_file, "r", encoding="utf-8") as f:
         words = [line.strip() for line in f if line.strip()]
 except FileNotFoundError:
+    print(f"WARNING: {words_file} не найден. Создан пустой список слов.")
     words = []
 
 # ====== Клавиатура Старт/Стоп ======
@@ -109,11 +123,15 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # ====== Запуск бота ======
 if __name__ == "__main__":
-    app = ApplicationBuilder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start_command))
-    app.add_handler(CommandHandler("add", add_word))
-    app.add_handler(CommandHandler("remove", remove_word))
-    app.add_handler(CommandHandler("list", list_words))
-    app.add_handler(CommandHandler("clear", clear_words))
-    app.add_handler(CallbackQueryHandler(button_handler))
-    app.run_polling()
+    try:
+        app = ApplicationBuilder().token(TOKEN).build()
+        app.add_handler(CommandHandler("start", start_command))
+        app.add_handler(CommandHandler("add", add_word))
+        app.add_handler(CommandHandler("remove", remove_word))
+        app.add_handler(CommandHandler("list", list_words))
+        app.add_handler(CommandHandler("clear", clear_words))
+        app.add_handler(CallbackQueryHandler(button_handler))
+        app.run_polling()
+    except Exception as e:
+        print("ERROR during bot startup:", e)
+        sys.exit(1)
